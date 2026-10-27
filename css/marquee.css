@@ -1,0 +1,181 @@
+/* ===================================================================
+ *  LETREIRO — topo estilo fliperama: nome em neon + placar (HUD)
+ * =================================================================== */
+
+.marquee {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 18px 24px 0;
+}
+
+.marquee__sign {
+  position: relative;
+  padding: 32px 20px 28px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse 70% 120% at 50% 0%, rgb(255 46 151 / 0.25), transparent 70%),
+    linear-gradient(#1d0d3c, #12072a);
+  box-shadow:
+    0 0 0 4px #3b2370,
+    0 0 0 8px var(--outline),
+    0 0 60px rgb(255 46 151 / 0.25),
+    inset 0 0 40px rgb(157 92 255 / 0.25);
+}
+
+/* Fileiras de lâmpadas: uma camada apagada + uma acesa que "corre" */
+.marquee__bulbs {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  height: 10px;
+  background: radial-gradient(circle at 5px 5px, #5c4a1c 0 3px, transparent 3.5px) 0 0 / 14px 10px repeat-x;
+}
+
+.marquee__bulbs::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 5px 5px, var(--yellow) 0 3px, transparent 3.5px) 0 0 / 28px 10px repeat-x;
+  filter: drop-shadow(0 0 4px var(--yellow));
+  animation: bulbs-chase 0.6s steps(1) infinite;
+}
+
+.marquee__bulbs--top { top: 10px; }
+.marquee__bulbs--bottom { bottom: 10px; }
+.marquee__bulbs--bottom::after { animation-direction: reverse; }
+
+@keyframes bulbs-chase {
+  50% { background-position: 14px 0; }
+}
+
+.marquee__kicker {
+  margin: 0 0 12px;
+  color: var(--cyan);
+  font: 10px/1.6 var(--font-pixel);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px rgb(34 230 255 / 0.8);
+}
+
+.marquee__title {
+  margin: 0;
+  color: #fff3fa;
+  font: clamp(22px, 4.6vw, 46px)/1.15 var(--font-pixel);
+  text-transform: uppercase;
+  text-shadow:
+    0 0 2px #fff,
+    0 0 10px var(--pink),
+    0 0 24px var(--pink),
+    0 0 48px rgb(255 46 151 / 0.7);
+  animation: neon-flicker 7s infinite;
+}
+
+/* O neon "falha" de vez em quando, como letreiro velho */
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 54%, 56%, 100% { opacity: 1; }
+  20%, 22%, 55% { opacity: 0.55; }
+}
+
+/* ---------- HUD: PLAYER 1 · HIGH SCORE · SOM ---------- */
+.hud {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  font-family: var(--font-pixel);
+  text-transform: uppercase;
+}
+
+.hud__item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-decoration: none;
+}
+
+.hud__label {
+  color: var(--pink);
+  font-size: 10px;
+}
+
+.hud__value {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-size: 16px;
+  text-transform: none;
+}
+
+.hud__player {
+  justify-self: start;
+}
+
+.hud__player:hover .hud__value {
+  color: var(--cyan);
+}
+
+.hud__score {
+  align-items: center;
+}
+
+.hud__score .hud__label {
+  color: var(--red);
+}
+
+.hud__score .hud__value {
+  font-size: 24px;
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 10px rgb(255 255 255 / 0.4);
+}
+
+.hud__mute {
+  justify-self: end;
+  align-items: flex-end;
+  cursor: pointer;
+}
+
+.hud__mute:hover .hud__value {
+  color: var(--yellow);
+}
+
+.hud__mute[aria-pressed='true'] .hud__value {
+  color: var(--ink-dim);
+}
+
+@media (max-width: 900px) {
+  .marquee {
+    padding: 14px 16px 0;
+  }
+
+  .marquee__sign {
+    padding: 28px 12px 24px;
+  }
+
+  .marquee__kicker {
+    margin-bottom: 12px;
+    font-size: 8px;
+  }
+
+  .hud {
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .hud__label {
+    font-size: 8px;
+  }
+
+  .hud__value {
+    font-size: 10px;
+  }
+
+  .hud__score .hud__value {
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lucas Marques · Portfólio Arcade</title>
+  <meta name="description" content="Portfólio interativo: escolha um cartucho, encaixe no console e aperte start para ver cada projeto.">
+  <meta name="theme-color" content="#0b0620">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+  <!-- Fontes pixel: Press Start 2P (títulos/rótulos) e VT323 (texto da TV) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap">
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/marquee.css">
+  <link rel="stylesheet" href="css/shelf.css">
+  <link rel="stylesheet" href="css/console.css">
+  <link rel="stylesheet" href="css/screen.css">
+
+  <!-- type="module": o navegador carrega sozinho os imports dentro de js/ -->
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <!-- ================= LETREIRO ================= -->
+  <header class="marquee">
+    <div class="marquee__sign">
+      <span class="marquee__bulbs marquee__bulbs--top" aria-hidden="true"></span>
+      <p class="marquee__kicker" data-config="tagline">Portfólio de projetos</p>
+      <h1 class="marquee__title" data-config="playerName">Lucas Marques</h1>
+      <span class="marquee__bulbs marquee__bulbs--bottom" aria-hidden="true"></span>
+    </div>
+
+    <div class="hud">
+      <a class="hud__item hud__player" id="player-link" href="https://github.com/KSKluc4" target="_blank" rel="noopener noreferrer">
+        <span class="hud__label">Player 1</span>
+        <span class="hud__value" id="player-handle">@KSKluc4</span>
+      </a>
+      <div class="hud__item hud__score">
+        <span class="hud__label">High score</span>
+        <span class="hud__value" id="hiscore">------</span>
+      </div>
+      <button class="hud__item hud__mute" id="mute-btn" type="button" aria-label="Silenciar sons" aria-pressed="false">
+        <span class="hud__label">Som</span>
+        <span class="hud__value">ON</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="room">
+    <div class="arcade">
+      <!-- ================= ESTANTE ================= -->
+      <section class="shelf" aria-labelledby="shelf-title">
+        <div class="shelf__top">
+          <span class="shelf__decor shelf__decor--cactus" aria-hidden="true"></span>
+          <h2 class="shelf__plaque" id="shelf-title">Escolha um cartucho</h2>
+          <span class="shelf__decor shelf__decor--gamepad" aria-hidden="true"></span>
+        </div>
+        <ul class="shelf__grid" id="shelf-grid" aria-label="Cartuchos (projetos)"></ul>
+        <p class="shelf__status" id="shelf-status" role="status"></p>
+        <div class="shelf__base" aria-hidden="true"></div>
+      </section>
+
+      <!-- ================= TV + CONSOLE ================= -->
+      <section class="station" id="station" aria-label="TV e console">
+        <div class="tv">
+          <div class="tv__antenna" aria-hidden="true"></div>
+          <div class="tv__case">
+            <div class="tv__bezel">
+              <div class="tv__screen" id="tv-screen" data-state="off">
+                <div class="screen__inner">
+                  <canvas class="screen__static" width="160" height="120" aria-hidden="true"></canvas>
+                  <div class="screen__content"></div>
+                </div>
+                <div class="screen__fx" aria-hidden="true"></div>
+              </div>
+            </div>
+            <div class="tv__side" aria-hidden="true">
+              <span class="tv__brand">CT-1987</span>
+              <span class="tv__knob"></span>
+              <span class="tv__knob tv__knob--small"></span>
+              <span class="tv__grille"></span>
+              <span class="tv__led"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rack da TV, com o console no vão -->
+        <div class="stand">
+          <div class="stand__bay">
+            <div class="console">
+              <p class="console__hint" aria-hidden="true">
+                <span class="console__hint-drag">Arraste um cartucho até aqui ▼<small>ou clique nele na estante</small></span>
+                <span class="console__hint-tap">▲ Toque em um cartucho</span>
+              </p>
+              <div class="console__body">
+                <div class="console__dock" aria-hidden="true"></div>
+                <div class="console__top"><span class="console__slot"></span></div>
+                <div class="console__front">
+                  <span class="console__led" aria-hidden="true"></span>
+                  <span class="console__brand"><span id="console-brand">LM-16</span><small>Cartridge system</small></span>
+                  <div class="console__buttons">
+                    <button type="button" class="console__btn" data-action="start">Start</button>
+                    <button type="button" class="console__btn console__btn--eject" data-action="eject" disabled>Ejetar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ================= RODAPÉ ================= -->
+  <footer class="footer">
+    <p id="data-source">Carregando dados...</p>
+    <p class="footer__keys"><kbd>M</kbd> som · <kbd>E</kbd> ejetar · <kbd>Enter</kbd> start</p>
+    <p>© <span id="year">2026</span> <span data-config="playerName">Lucas Marques</span> · <span id="footer-links"></span></p>
+  </footer>
+
+  <!-- Avisos curtos para leitores de tela -->
+  <p class="sr-only" id="announcer" aria-live="polite"></p>
+
+  <script>
+    // Abrindo o index.html direto (file://) os módulos JS são bloqueados pelo navegador.
+    if (location.protocol === 'file:') {
+      document.body.insertAdjacentHTML('beforeend',
+        '<div class="file-warning">Abra o site por um servidor local, por ex.: ' +
+        '<code>python3 -m http.server</code> e acesse <code>http://localhost:8000</code></div>');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,379 @@
+/* ===================================================================
+ *  ESTANTE + CARTUCHOS
+ * =================================================================== */
+
+.shelf {
+  --row: calc(var(--cart-h) + 48px);   /* altura de cada prateleira */
+  --board: 20px;                       /* espessura da tábua */
+
+  position: relative;
+  padding: 0 14px;
+  background: var(--wood);
+  box-shadow:
+    inset 4px 0 0 var(--wood-hi),
+    inset -4px 0 0 var(--wood-lo),
+    0 0 0 4px var(--outline),
+    0 30px 50px rgb(0 0 0 / 0.5);
+}
+
+/* Tampo de cima, com a plaquinha */
+.shelf__top {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 44px;
+  margin: 0 -14px;
+  background: var(--wood);
+  box-shadow: inset 0 4px 0 var(--wood-hi), inset 0 -4px 0 var(--wood-lo);
+}
+
+.shelf__plaque {
+  margin: 0;
+  padding: 6px 10px 5px;
+  background: linear-gradient(#ffe7a3, #d9a441);
+  box-shadow: 0 0 0 3px #4a2c0e, inset 0 -2px 0 #a8742a;
+  color: #3b2110;
+  font: 8px/1.4 var(--font-pixel);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Enfeites em cima do móvel (desenhados em js/pixel.js, escala 4x) */
+.shelf__decor {
+  position: absolute;
+  bottom: 100%;
+}
+
+.shelf__decor svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.shelf__decor--cactus {
+  left: 26px;
+  width: 40px;
+}
+
+.shelf__decor--gamepad {
+  right: 26px;
+  width: 72px;
+}
+
+/* ---------- As prateleiras ----------
+ * Cada linha do grid é uma prateleira. As tábuas, a fita de LED e o
+ * fundo do móvel são gradientes que se repetem a cada --row, então a
+ * estante cresce sozinha quando entram mais projetos. */
+.shelf__grid {
+  display: grid;
+  grid-template-columns: repeat(3, var(--cart-w));
+  grid-auto-rows: var(--row);
+  justify-content: center;
+  column-gap: 16px;
+  min-height: calc(var(--row) * 2);
+  margin: 0;
+  padding: 0 14px;
+  list-style: none;
+  background:
+    /* tábua: borda iluminada, frente e sombra */
+    repeating-linear-gradient(
+      transparent 0 calc(var(--row) - var(--board)),
+      var(--wood-hi) calc(var(--row) - var(--board)) calc(var(--row) - var(--board) + 4px),
+      var(--wood) calc(var(--row) - var(--board) + 4px) calc(var(--row) - 6px),
+      var(--wood-lo) calc(var(--row) - 6px) var(--row)
+    ),
+    /* fita de LED neon embaixo de cada tábua */
+    repeating-linear-gradient(
+      rgb(34 230 255 / 0.9) 0 2px,
+      rgb(34 230 255 / 0.2) 2px 8px,
+      transparent 72px var(--row)
+    ),
+    /* fundo do móvel: tábuas verticais */
+    repeating-linear-gradient(90deg, var(--wood-back) 0 46px, #150b06 46px 48px),
+    var(--wood-back);
+}
+
+.shelf__slot {
+  position: relative;
+  align-self: end;
+  width: var(--cart-w);
+  height: var(--cart-h);
+  margin-bottom: calc(var(--board) - 4px);   /* o cartucho fica em pé em cima da tábua */
+}
+
+/* Lugar vazio na estante enquanto o cartucho está no console */
+.shelf__slot.is-out::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 12px;
+  border: 3px dashed color-mix(in srgb, var(--c) 60%, transparent);
+  background: color-mix(in srgb, var(--c) 8%, transparent);
+}
+
+.shelf__slot.is-out .cart__body {
+  opacity: 0;
+}
+
+/* Espaço "em breve" depois do último cartucho */
+.shelf__slot--soon {
+  display: grid;
+  place-content: center;
+  gap: 10px;
+  height: calc(var(--cart-h) - 12px);
+  border: 3px dashed #3d2a5e;
+  color: #5d4b88;
+  font-family: var(--font-pixel);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.shelf__slot--soon b {
+  font-size: 24px;
+}
+
+.shelf__slot--soon small {
+  font-size: 7px;
+  line-height: 1.7;
+}
+
+.shelf__base {
+  height: 22px;
+  margin: 0 -14px;
+  background: var(--wood-lo);
+  box-shadow: inset 0 4px 0 var(--wood);
+}
+
+/* "Carregando..." / erro, por cima das prateleiras */
+.shelf__status {
+  position: absolute;
+  top: 44px;
+  left: 14px;
+  right: 14px;
+  height: var(--row);
+  margin: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 16px;
+  padding: 0 12px;
+  color: var(--yellow);
+  font: 10px/1.8 var(--font-pixel);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.shelf__status:empty {
+  display: none;
+}
+
+/* ===================================================================
+ *  CARTUCHO
+ *  .cart__body é o desenho; ele é reaproveitado na estante, no voo
+ *  e dentro do console. A cor vem da variável --c.
+ * =================================================================== */
+.cart {
+  position: relative;
+  display: block;
+  width: var(--cart-w);
+  height: var(--cart-h);
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: grab;
+  touch-action: none;          /* permite arrastar com o dedo em telas grandes */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.2s steps(4, end), filter 0.2s;
+}
+
+.cart:hover,
+.cart:focus-visible {
+  transform: translateY(-12px);
+  filter: drop-shadow(0 0 12px var(--c));
+}
+
+.cart:focus-visible {
+  outline: none;
+}
+
+.cart:focus-visible .cart__shell {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+/* Cartucho que está no console: só o "buraco" fica na estante */
+.is-out .cart {
+  cursor: pointer;
+  transform: none;
+  filter: none;
+}
+
+.cart__body {
+  --shell: color-mix(in srgb, var(--c) 55%, #1a1030);
+  --shell-hi: color-mix(in srgb, var(--c) 62%, #fff);
+  --shell-lo: color-mix(in srgb, var(--c) 32%, #05030d);
+
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-pixel);
+  text-align: center;
+}
+
+/* Carcaça de plástico com cantos de cima recortados em "degrau" */
+.cart__shell {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 9px 9px;
+  background: var(--shell);
+  box-shadow: inset 4px 4px 0 var(--shell-hi), inset -4px -4px 0 var(--shell-lo);
+  clip-path: polygon(0 8px, 8px 8px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px, 100% 100%, 0 100%);
+}
+
+/* Frisos de pegada no topo */
+.cart__grip {
+  flex: none;
+  height: 12px;
+  margin: 0 4px 5px;
+  background: repeating-linear-gradient(var(--shell-lo) 0 2px, transparent 2px 5px);
+}
+
+/* Etiqueta: título em cima, arte embaixo */
+.cart__label {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #140a2a;
+  box-shadow: 0 0 0 3px var(--shell-lo);
+}
+
+.cart__title {
+  flex: none;
+  display: grid;
+  place-items: center;
+  min-height: 36px;
+  padding: 6px 4px;
+  background: #fff6e0;
+  border-bottom: 4px solid var(--c);
+  color: #1b1030;
+  font-size: 8px;
+  line-height: 1.5;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.cart__title > span {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+.cart__art {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 20% 30%, rgb(255 255 255 / 0.5) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 78% 22%, rgb(255 255 255 / 0.4) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 65% 75%, rgb(255 255 255 / 0.35) 0 1px, transparent 1.5px),
+    radial-gradient(ellipse at 50% 120%, color-mix(in srgb, var(--c) 45%, transparent), transparent 70%),
+    #140a2a;
+}
+
+.cart__sprite {
+  width: auto;
+  height: 62%;
+  max-height: 30px;
+  color: var(--c);
+  filter: drop-shadow(0 0 4px var(--c));
+}
+
+/* Conector (a parte que entra no console), com os contatos dourados */
+.cart__pins {
+  flex: none;
+  width: calc(100% - 20px);
+  height: 12px;
+  background:
+    linear-gradient(var(--shell-lo) 0 4px, transparent 4px),
+    repeating-linear-gradient(90deg, #d8b25a 0 4px, #6a4f17 4px 6px),
+    #6a4f17;
+  box-shadow: inset 0 -3px 0 rgb(0 0 0 / 0.35);
+}
+
+/* ---------- Cartucho "voando" (arrastar e animações) ---------- */
+.cart-flying {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.cart-flying__y {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--cart-w);
+  height: var(--cart-h);
+  will-change: transform;
+}
+
+.cart-flying .cart__body {
+  filter: drop-shadow(0 0 14px var(--c)) drop-shadow(0 16px 0 rgb(0 0 0 / 0.35));
+}
+
+body.is-dragging,
+body.is-dragging * {
+  cursor: grabbing !important;
+}
+
+/* ---------- Celular: a estante vira uma fileira que rola na horizontal ---------- */
+@media (max-width: 900px) {
+  .shelf__decor {
+    display: none;
+  }
+
+  .shelf__top {
+    height: 38px;
+  }
+
+  .shelf__grid {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: var(--cart-w);
+    justify-content: start;
+    min-height: var(--row);
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 14px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--cyan) transparent;
+    background-attachment: local;   /* as tábuas acompanham a rolagem */
+  }
+
+  .shelf__slot {
+    scroll-snap-align: start;
+  }
+
+  .shelf__status {
+    top: 38px;
+  }
+
+  /* Aqui o toque rola a lista; encaixar é com um toque simples */
+  .cart {
+    touch-action: manipulation;
+    cursor: pointer;
+  }
+}

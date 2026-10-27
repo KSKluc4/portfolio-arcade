@@ -1,0 +1,507 @@
+/* ===================================================================
+ *  TV DE TUBO (carcaça) + RACK + CONSOLE
+ *  Os efeitos da tela ficam em screen.css.
+ * =================================================================== */
+
+.station {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 64px;   /* espaço da antena */
+}
+
+/* ---------- TV ---------- */
+.tv {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 640px;
+}
+
+/* Antena "orelha de coelho" */
+.tv__antenna {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 60px;
+  height: 22px;
+  margin-left: -30px;
+  background: #241d3a;
+  border-radius: 30px 30px 0 0;
+  box-shadow: inset 0 4px 0 #463b6b;
+}
+
+.tv__antenna::before,
+.tv__antenna::after {
+  content: '';
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  width: 4px;
+  height: 72px;
+  margin-left: -2px;
+  background: linear-gradient(#f2eeff 0 8px, #9a92bb 8px, #5d557e);
+  transform-origin: 50% 100%;
+}
+
+.tv__antenna::before { transform: rotate(-34deg); }
+.tv__antenna::after { transform: rotate(28deg); }
+
+.tv__case {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(60px, 14%, 84px);   /* painel lateral estreita em TVs menores */
+  gap: clamp(12px, 3%, 18px);
+  padding: 22px;
+  background: linear-gradient(#3a3156, #2a2343 60%, #231d39);
+  border-radius: 16px;
+  box-shadow:
+    0 0 0 4px var(--outline),
+    inset 0 4px 0 #574b7d,
+    inset 0 -8px 0 #1a1530,
+    0 34px 60px rgb(0 0 0 / 0.55);
+  transition: box-shadow 0.2s;
+}
+
+/* Pezinhos (apoiados no rack) */
+.tv__case::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 14%;
+  right: 14%;
+  height: 12px;
+  background:
+    linear-gradient(#17122a, #17122a) left / 14% 100% no-repeat,
+    linear-gradient(#17122a, #17122a) right / 14% 100% no-repeat;
+}
+
+/* Moldura preta em volta do tubo */
+.tv__bezel {
+  padding: 14px;
+  background: #141020;
+  border-radius: 30px;
+  box-shadow: inset 0 0 0 3px #2b2440, inset 0 10px 18px rgb(0 0 0 / 0.75);
+}
+
+/* Painel lateral: marca, botões giratórios, alto-falante e LED */
+.tv__side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0 4px;
+}
+
+.tv__brand {
+  padding: 5px 6px;
+  background: #14101f;
+  box-shadow: inset 0 0 0 2px #4e4470;
+  color: #cfc7ea;
+  font: 7px var(--font-pixel);
+  letter-spacing: 0.05em;
+}
+
+.tv__knob {
+  position: relative;
+  width: 46px;
+  aspect-ratio: 1;
+  background: radial-gradient(circle at 40% 35%, #75699c, #2b2442 70%);
+  clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+}
+
+/* Marquinha do botão (gira a partir do centro) */
+.tv__knob::after {
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  width: 4px;
+  height: 40%;
+  margin-left: -2px;
+  background: #e8e2ff;
+  transform-origin: 50% 100%;
+  transform: rotate(-40deg);
+}
+
+.tv__knob--small {
+  width: 32px;
+}
+
+.tv__knob--small::after {
+  transform: rotate(110deg);
+}
+
+.tv__grille {
+  flex: 1;
+  width: 52px;
+  max-width: 100%;
+  min-height: 36px;
+  background: repeating-linear-gradient(#120e1d 0 4px, transparent 4px 8px);
+}
+
+/* LED de standby: vermelho desligada, verde ligada */
+.tv__led {
+  width: 8px;
+  height: 8px;
+  background: #ff3355;
+  box-shadow: 0 0 0 2px var(--outline), 0 0 6px #ff3355;
+}
+
+.station.is-on .tv__led {
+  background: var(--green);
+  box-shadow: 0 0 0 2px var(--outline), 0 0 8px var(--green);
+}
+
+/* Destaque quando um cartucho arrastado passa por cima */
+.station.is-over .tv__case {
+  box-shadow:
+    0 0 0 4px var(--yellow),
+    0 0 40px rgb(255 225 77 / 0.35),
+    inset 0 4px 0 #574b7d,
+    inset 0 -8px 0 #1a1530,
+    0 34px 60px rgb(0 0 0 / 0.55);
+}
+
+/* ---------- RACK (a TV fica em cima, o console no vão) ---------- */
+.stand {
+  position: relative;
+  width: min(100%, 600px);
+  margin-top: 12px;   /* altura dos pezinhos da TV */
+  padding: 18px 14px 20px;
+  background: var(--wood);
+  box-shadow:
+    inset 0 4px 0 var(--wood-hi),
+    inset 4px 0 0 var(--wood-hi),
+    inset -4px 0 0 var(--wood-lo),
+    inset 0 -4px 0 var(--wood-lo),
+    0 0 0 4px var(--outline),
+    0 30px 50px rgb(0 0 0 / 0.5);
+}
+
+/* Pés do rack */
+.stand::after {
+  content: '';
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 5%;
+  right: 5%;
+  height: 10px;
+  background:
+    linear-gradient(var(--wood-lo), var(--wood-lo)) left / 9% 100% no-repeat,
+    linear-gradient(var(--wood-lo), var(--wood-lo)) right / 9% 100% no-repeat;
+}
+
+/* O vão: fundo escuro de madeira com a mesma fita de LED da estante */
+.stand__bay {
+  display: flex;
+  justify-content: center;
+  padding: calc(var(--cart-h) * 0.5 + 30px) 12px 14px;
+  background:
+    linear-gradient(rgb(34 230 255 / 0.9) 0 2px, rgb(34 230 255 / 0.2) 2px 8px, transparent 72px),
+    repeating-linear-gradient(90deg, var(--wood-back) 0 46px, #150b06 46px 48px);
+  box-shadow: inset 0 8px 14px rgb(0 0 0 / 0.45);
+}
+
+/* ---------- CONSOLE ---------- */
+.console {
+  position: relative;
+  z-index: 2;   /* fica na frente da TV: o cartucho passa por cima dela na animação */
+  width: calc(var(--cart-w) + 220px);
+  max-width: 100%;
+}
+
+/* "Arraste um cartucho até aqui" piscando em cima da fenda */
+.console__hint {
+  position: absolute;
+  left: -40px;
+  right: -40px;
+  bottom: calc(100% + 16px);
+  margin: 0;
+  color: var(--yellow);
+  font: 8px/1.6 var(--font-pixel);
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px rgb(255 225 77 / 0.6);
+  animation: blink 1.2s steps(1) infinite;
+}
+
+.console__hint small {
+  display: block;
+  margin-top: 6px;
+  color: #c9bfe8;
+  font-size: 7px;
+  text-shadow: none;
+}
+
+.console__hint-tap {
+  display: none;
+}
+
+/* Some enquanto houver cartucho no console (inclusive durante as animações) ou sendo arrastado */
+.console:has(.console__cart) .console__hint,
+.station.is-on .console__hint,
+body.is-dragging .console__hint {
+  visibility: hidden;
+}
+
+/* START sem cartucho: a dica "chacoalha" */
+.console.is-nudged .console__hint {
+  animation: nudge 0.12s steps(2) 4;
+}
+
+@keyframes nudge {
+  50% { transform: translateX(6px); }
+}
+
+.console__body {
+  position: relative;
+}
+
+/* Pezinhos do console */
+.console__body::after {
+  content: '';
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 10%;
+  right: 10%;
+  height: 8px;
+  background:
+    linear-gradient(var(--outline), var(--outline)) left / 14% 100% no-repeat,
+    linear-gradient(var(--outline), var(--outline)) right / 14% 100% no-repeat;
+}
+
+/* Área acima da fenda onde o cartucho encaixado aparece.
+ * overflow: hidden + borda de baixo na fenda = o cartucho "entra" no console. */
+.console__dock {
+  position: absolute;
+  bottom: calc(100% - 14px);
+  left: 50%;
+  z-index: 1;
+  width: calc(var(--cart-w) + 40px);
+  height: calc(var(--cart-h) + 40px);
+  margin-left: calc((var(--cart-w) + 40px) / -2);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Contorno mostrando onde soltar, enquanto arrasta */
+body.is-dragging .station:not(.is-on) .console__dock::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20px;
+  right: 20px;
+  height: calc(var(--cart-h) * 0.58);
+  border: 3px dashed var(--yellow);
+  border-bottom: 0;
+  animation: blink 0.8s steps(1) infinite;
+}
+
+.station.is-over .console__dock::before {
+  border-style: solid;
+  background: rgb(255 225 77 / 0.08);
+  animation: none;
+}
+
+/* O cartucho dentro do console: 'above' = em cima da fenda, 'in' = encaixado */
+.console__cart {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: var(--cart-w);
+  height: var(--cart-h);
+  margin-left: calc(var(--cart-w) / -2);
+}
+
+.console__cart[data-pos='above'] { transform: translateY(-10px); }
+.console__cart[data-pos='in'] { transform: translateY(calc(var(--cart-h) * 0.42)); }
+
+/* Tampa de cima, com a fenda */
+.console__top {
+  position: relative;
+  height: 20px;
+  background: linear-gradient(#4a4070, #3a3159);
+  box-shadow: 0 0 0 4px var(--outline), inset 0 3px 0 #6a5d98;
+}
+
+.console__slot {
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  width: calc(var(--cart-w) + 14px);
+  height: 11px;
+  margin-left: calc((var(--cart-w) + 14px) / -2);
+  background: #07050c;
+  box-shadow: inset 0 3px 0 #000, 0 2px 0 #6a5d98;
+  transition: box-shadow 0.2s;
+}
+
+body.is-dragging .console__slot {
+  box-shadow: inset 0 3px 0 #000, 0 2px 0 #6a5d98, 0 0 14px var(--yellow);
+}
+
+/* Frente: LED, marca e botões */
+.console__front {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 16px 18px;
+  background: linear-gradient(#2c2547, #221c38);
+  box-shadow: 0 0 0 4px var(--outline), inset 0 -6px 0 #16112a;
+}
+
+/* Listra neon */
+.console__front::before {
+  content: '';
+  position: absolute;
+  top: 7px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--pink), var(--cyan));
+  opacity: 0.85;
+}
+
+.console__led {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  background: #4a1020;
+  box-shadow: 0 0 0 2px var(--outline);
+}
+
+.station.is-on .console__led {
+  background: var(--green);
+  box-shadow: 0 0 0 2px var(--outline), 0 0 10px var(--green);
+}
+
+.console__brand {
+  flex: 1;
+  min-width: 0;
+  color: #d9d2f5;
+  font: 10px var(--font-pixel);
+  letter-spacing: 0.08em;
+}
+
+.console__brand small {
+  display: block;
+  margin-top: 6px;
+  color: var(--ink-dim);
+  font-size: 6px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.console__buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.console__btn {
+  padding: 9px 10px 8px;
+  border: 0;
+  background: #474066;
+  color: #ece7ff;
+  font: 8px var(--font-pixel);
+  text-transform: uppercase;
+  box-shadow: 0 0 0 3px var(--outline), inset -3px -3px 0 #2a2442, inset 3px 3px 0 #6b6292;
+  cursor: pointer;
+}
+
+.console__btn:hover:not(:disabled) {
+  background: #554d78;
+}
+
+.console__btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 3px var(--outline), inset 3px 3px 0 #2a2442;
+}
+
+.console__btn--eject {
+  background: #b8204f;
+  box-shadow: 0 0 0 3px var(--outline), inset -3px -3px 0 #6e0f2e, inset 3px 3px 0 #ff5a8a;
+}
+
+.console__btn--eject:hover:not(:disabled) {
+  background: #d02a5c;
+}
+
+.console__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---------- Telas de notebook (pouca altura): TV um pouco menor ---------- */
+@media (min-width: 901px) and (max-height: 860px) {
+  .tv {
+    max-width: 560px;
+  }
+
+  .stand {
+    width: min(100%, 520px);
+  }
+}
+
+/* ---------- Celular ---------- */
+@media (max-width: 900px) {
+  .station {
+    padding-top: 52px;
+  }
+
+  .tv__antenna::before,
+  .tv__antenna::after {
+    height: 58px;
+  }
+
+  .tv__case {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .tv__side {
+    display: none;
+  }
+
+  .tv__bezel {
+    padding: 8px;
+    border-radius: 20px;
+  }
+
+  .stand {
+    width: calc(100% - 24px);
+    padding: 14px 10px 16px;
+  }
+
+  .stand__bay {
+    padding: calc(var(--cart-h) * 0.5 + 26px) 6px 14px;
+  }
+
+  .console {
+    width: min(100%, calc(var(--cart-w) + 190px));
+  }
+
+  .console__front {
+    gap: 10px;
+    padding: 18px 12px 16px;
+  }
+
+  .console__brand {
+    font-size: 8px;
+  }
+
+  .console__buttons {
+    gap: 10px;
+  }
+
+  .console__hint-drag {
+    display: none;
+  }
+
+  .console__hint-tap {
+    display: inline;
+  }
+}
